@@ -4,7 +4,7 @@ exports.Conversation = void 0;
 const mongoose_1 = require("mongoose");
 const Message_1 = require("./Message");
 const ConversationSchema = new mongoose_1.Schema({
-    recipidents: {
+    members: {
         type: Array,
     },
     lastMessage: {

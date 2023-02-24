@@ -2,9 +2,10 @@ import { User } from "@/models/User";
 import { compare, hash } from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { generateAccessToken, generateRefreshToken } from "@/lib/jwt";
-import { StatusCodes } from "http-status-codes";
+import { generateAccessToken, generateRefreshToken, verifyToken } from "@/lib/jwt";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { LoginDTO, SignUpDTO } from "@/dto/auth";
+import { CustomError } from "@/dto/error";
 
 export const login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body as LoginDTO;
@@ -37,4 +38,30 @@ export const signup = asyncHandler(async (req: Request, res: Response) => {
     res.status(StatusCodes.CREATED).json({
         msg: "User created successfully",
     });
+});
+export const refreshToken = asyncHandler(async (req: Request, res: Response) => {
+    const refreshToken = req.cookies["refreshToken"];
+
+    console.log(refreshToken);
+
+    if (!refreshToken) throw new CustomError(StatusCodes.FORBIDDEN, ReasonPhrases.FORBIDDEN);
+
+    const decoded = (await verifyToken(refreshToken, "refresh-token")) as any;
+
+    delete decoded.iat;
+    delete decoded.exp;
+
+    const newAccessToken = generateAccessToken(decoded);
+
+    res.status(200).json({ accessToken: newAccessToken });
+});
+
+export const getAuthUser = asyncHandler(async (req: Request, res: Response) => {
+    const userId = res.locals.user.id;
+
+    const user = await User.findById(userId).select("_id username fullName").lean();
+
+    if (!user) throw new CustomError(StatusCodes.NOT_FOUND, ReasonPhrases.NOT_FOUND);
+
+    res.status(200).json({ user });
 });

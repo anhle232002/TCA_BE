@@ -1,21 +1,31 @@
-import mongoose, { model, Schema } from "mongoose";
-import { Message } from "./Message";
+import { model, Schema } from "mongoose";
 
 const ConversationSchema = new Schema({
-    recipidents: {
-        type: Array,
-    },
-
+    members: [
+        {
+            type: String,
+            ref: "user",
+        },
+    ],
     lastMessage: {
-        message: Message,
+        message: Object,
         seen: {
             type: Array,
         },
     },
-
-    date: {
+    createdAt: {
         type: Schema.Types.Date,
         default: Date.now,
     },
+
+    updatedAt: {
+        type: Schema.Types.Date,
+        default: Date.now,
+    },
+});
+
+ConversationSchema.pre("updateOne", function (next) {
+    this.set({ updatedAt: new Date() });
+    next();
 });
 export const Conversation = model("conversation", ConversationSchema);
