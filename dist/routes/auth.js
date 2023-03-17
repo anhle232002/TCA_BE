@@ -5,10 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const auth_1 = require("@/controllers/auth");
 const validate_1 = __importDefault(require("@/middlewares/validate"));
+const validateAuth_1 = __importDefault(require("@/middlewares/validateAuth"));
 const auth_2 = require("@/validation/auth");
 const express_1 = require("express");
 const router = (0, express_1.Router)();
-router.get("/auth");
+router.get("/auth", validateAuth_1.default, auth_1.getAuthUser);
+router.get("/auth/refresh", auth_1.refreshToken);
 router.post("/auth/login", auth_1.login);
 router.post("/auth/signup", (0, validate_1.default)(auth_2.signupSchema), auth_1.signup);
 exports.default = router;

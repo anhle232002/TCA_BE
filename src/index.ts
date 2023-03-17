@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import authRoute from "./routes/auth";
 import conversationRoute from "./routes/conversation";
 import usersRoute from "./routes/users";
+import translateRoute from "./routes/translate";
 import { errorHandler } from "./middlewares/error-handler";
 import notFound from "./middlewares/not-found";
 import ioHandler from "./io";
@@ -32,6 +33,7 @@ app.use(express.json());
 app.use("/api", authRoute);
 app.use("/api", usersRoute);
 app.use("/api", conversationRoute);
+app.use("/api", translateRoute);
 app.use(notFound);
 app.use(errorHandler);
 

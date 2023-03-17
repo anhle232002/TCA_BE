@@ -59,7 +59,7 @@ export const refreshToken = asyncHandler(async (req: Request, res: Response) => 
 export const getAuthUser = asyncHandler(async (req: Request, res: Response) => {
     const userId = res.locals.user.id;
 
-    const user = await User.findById(userId).select("_id username fullName").lean();
+    const user = await User.findById(userId).select("_id username fullName language").lean();
 
     if (!user) throw new CustomError(StatusCodes.NOT_FOUND, ReasonPhrases.NOT_FOUND);
 

@@ -3,6 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Message = void 0;
 const mongoose_1 = require("mongoose");
 const MessageSchema = new mongoose_1.Schema({
+    conversationId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "conversation",
+    },
     from: mongoose_1.Schema.Types.ObjectId,
     to: mongoose_1.Schema.Types.ObjectId,
     body: {

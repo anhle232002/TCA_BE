@@ -20,6 +20,10 @@ const UserSchema = new Schema({
         type: String,
         default: "",
     },
+    language: {
+        type: String,
+        default: "en",
+    },
 });
 
 export const User = model("user", UserSchema);

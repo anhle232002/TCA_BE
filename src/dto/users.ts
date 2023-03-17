@@ -3,4 +3,6 @@ export interface UpdateProfileDTO {
     city: string;
     phone: string;
     describe: string;
+    language: string;
+    avatar?: string;
 }

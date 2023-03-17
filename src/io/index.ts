@@ -26,6 +26,7 @@ export default (io: Server) => {
                 }
             } catch (error) {
                 socket.emit("error", { message: "Cannot send message" });
+                console.log(error);
             }
         });
 

@@ -14,8 +14,12 @@ const generateRefreshToken = (payload) => {
     return (0, jsonwebtoken_1.sign)(payload, config_1.default.REFRESH_TOKEN_SECRET, { expiresIn: config_1.default.REFRESH_TOKEN_EXP });
 };
 exports.generateRefreshToken = generateRefreshToken;
-const verifyToken = (token, type) => {
-    return (0, jsonwebtoken_1.verify)(token, type === "access-token" ? config_1.default.ACCESS_TOKEN_SECRET : config_1.default.REFRESH_TOKEN_SECRET);
-};
+const verifyToken = (token, type) => new Promise((resolve, reject) => {
+    (0, jsonwebtoken_1.verify)(token, type === "access-token" ? config_1.default.ACCESS_TOKEN_SECRET : config_1.default.REFRESH_TOKEN_SECRET, (err, decoded) => {
+        if (err)
+            reject(err);
+        resolve(decoded);
+    });
+});
 exports.verifyToken = verifyToken;
 //# sourceMappingURL=jwt.js.map
