@@ -53,12 +53,19 @@ export const getMessages = asyncHandler(async (req: Request, res: Response) => {
 
 export const getConversationByMembers = asyncHandler(async (req: Request, res: Response) => {
     const memberId = req.params.id;
-
+    const userId = res.locals.user.id;
     const user = await User.findById(memberId).select("_id fullName avatar").lean();
 
     if (!user) throw new CustomError(404, "User is not found");
 
-    const conversation = await Conversation.findOne({ members: { $in: memberId } })
+    const conversation = await Conversation.findOne({
+        members: {
+            $in: [
+                [memberId, userId],
+                [userId, memberId],
+            ],
+        },
+    })
         .populate("members", "_id fullName")
         .lean();
 

@@ -1,5 +1,7 @@
 import { Message as TMessage } from "@/dto/message";
+import { Conversation } from "@/models/Conversation";
 import { Message } from "@/models/Message";
+import { TTypingStatus } from "@/types";
 import { Server, Socket } from "socket.io";
 
 export default (io: Server) => {
@@ -13,7 +15,16 @@ export default (io: Server) => {
 
         socket.on("message", async (data: TMessage) => {
             console.log("data", data);
+
             try {
+                if (!data.conversationId) {
+                    const newConversation = await Conversation.create({
+                        members: [data.from, data.to],
+                    });
+                    data.conversationId = newConversation._id.toString();
+                    console.log("data 2", data);
+                }
+
                 await Message.create(data);
 
                 const { to } = data;
@@ -26,6 +37,21 @@ export default (io: Server) => {
                 }
             } catch (error) {
                 socket.emit("error", { message: "Cannot send message" });
+                console.log(error);
+            }
+        });
+
+        socket.on("typing", async (data: TTypingStatus) => {
+            try {
+                console.log(data);
+
+                const receivedSocket = onlineUsers[data.to];
+                if (receivedSocket) {
+                    receivedSocket.emit(`typing/${data.conversationId}`, data);
+                    console.log("sent");
+                }
+            } catch (error) {
+                socket.emit("error", { message: "Listen to conversation failed" });
                 console.log(error);
             }
         });
