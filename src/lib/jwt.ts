@@ -1,6 +1,5 @@
 import config from "@/config";
 import { sign, verify } from "jsonwebtoken";
-import { promisify } from "util";
 
 export const generateAccessToken = (payload: any) => {
     return sign(payload, config.ACCESS_TOKEN_SECRET, { expiresIn: config.ACCESS_TOKEN_EXP });

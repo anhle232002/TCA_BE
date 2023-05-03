@@ -4,13 +4,23 @@ import { User } from "@/models/User";
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { StatusCodes } from "http-status-codes";
+import { FilterQuery } from "mongoose";
 
 export const getUsers = asyncHandler(async (req: Request, res: Response) => {
+    const query = req.query.search as string;
+
     const userId = res.locals.user.id;
 
-    const users = await User.find({ _id: { $ne: userId } })
-        .select("_id username fullName language avatar")
-        .lean();
+    let filter: FilterQuery<typeof User> = { _id: { $ne: userId } };
+
+    if (query && query !== "") {
+        filter.$or = [
+            { username: { $regex: new RegExp(query, "gi") } },
+            { fullName: { $regex: new RegExp(query, "gi") } },
+        ];
+    }
+
+    const users = await User.find(filter).select("_id username fullName language avatar").lean();
 
     res.status(200).json({ data: users });
 });

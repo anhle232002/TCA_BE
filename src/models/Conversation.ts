@@ -3,7 +3,7 @@ import { model, Schema } from "mongoose";
 const ConversationSchema = new Schema({
     members: [
         {
-            type: String,
+            type: Schema.Types.ObjectId,
             ref: "user",
         },
     ],

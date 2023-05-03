@@ -1,4 +1,5 @@
 import { model, Schema } from "mongoose";
+import { Conversation } from "./Conversation";
 
 const MessageSchema = new Schema({
     conversationId: {
@@ -21,4 +22,11 @@ const MessageSchema = new Schema({
     },
 });
 
+MessageSchema.post("save", function (doc, next) {
+    console.log(doc);
+
+    Conversation.findByIdAndUpdate(doc.conversationId, { updatedAt: Date.now() });
+
+    next();
+});
 export const Message = model("message", MessageSchema);

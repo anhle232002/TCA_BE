@@ -1,4 +1,5 @@
 import { Message as TMessage } from "@/dto/message";
+import { cache } from "@/lib/node-cache";
 import { Conversation } from "@/models/Conversation";
 import { Message } from "@/models/Message";
 import { TTypingStatus } from "@/types";
@@ -25,7 +26,12 @@ export default (io: Server) => {
                     console.log("data 2", data);
                 }
 
-                await Message.create(data);
+                const message = await Message.create(data);
+
+                cache.set(`last-message/${data.conversationId}`, {
+                    message,
+                    seen: [],
+                });
 
                 const { to } = data;
 
