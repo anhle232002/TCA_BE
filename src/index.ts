@@ -19,15 +19,16 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: ["http://localhost:5002", "http://192.168.0.111:5002"],
         methods: ["GET", "POST"],
-        allowedHeaders: ["my-custom-header"],
         credentials: true,
     },
 });
 dotenv.config();
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+    cors({ origin: ["http://localhost:5002", "http://192.168.0.111:5002"], credentials: true })
+);
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api", authRoute);
